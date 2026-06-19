@@ -1,0 +1,6 @@
+anchor-project/target
+anchor-project/.anchor
+execution-agent/venv
+ai-node/venv
+**/*.log
+.DS_Store
