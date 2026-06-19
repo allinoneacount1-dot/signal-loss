@@ -1,0 +1,263 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --font-display: 'VT323', 'Courier New', monospace;
+  --font-body: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-data: 'JetBrains Mono', 'Courier New', monospace;
+  --font-accent: 'Share Tech Mono', 'Courier New', monospace;
+
+  --sl-amber: #FFB000;
+  --sl-amber-dim: #B37D00;
+  --sl-green: #33FF00;
+  --sl-green-dim: #1F9900;
+  --sl-red: #FF2200;
+  --sl-red-dim: #991500;
+  --sl-bone: #E0E0E0;
+  --sl-bone-dim: #8A8A8A;
+  --sl-void: #050505;
+  --sl-void-2: #0A0A0A;
+  --sl-grid: #1A1A1A;
+  --sl-grid-2: #2A2A2A;
+}
+
+@layer base {
+  * {
+    border-radius: 0 !important;
+  }
+
+  html, body {
+    background-color: var(--sl-void);
+    color: var(--sl-bone);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  body {
+    position: relative;
+  }
+
+  /* Tabular numbers for all data */
+  .font-mono, .font-data {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Custom scrollbar — minimal, terminal style */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--sl-void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--sl-grid-2);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--sl-amber-dim);
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--sl-amber);
+    color: var(--sl-void);
+  }
+}
+
+@layer components {
+  /* ===== ANIMATIONS ===== */
+
+  @keyframes sl-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.97; }
+  }
+  @keyframes sl-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  @keyframes sl-decode {
+    0% { filter: blur(2px); opacity: 0; }
+    100% { filter: blur(0); opacity: 1; }
+  }
+  @keyframes sl-scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes sl-ticker {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+  }
+  @keyframes sl-pulse-dot {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* ===== UTILITIES ===== */
+
+  /* Scanline overlay */
+  .sl-scanlines {
+    position: relative;
+  }
+  .sl-scanlines::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255, 176, 0, 0.025) 0px,
+      rgba(255, 176, 0, 0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+  .sl-scanlines::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+  }
+
+  /* Flicker */
+  .sl-flicker {
+    animation: sl-flicker 0.1s infinite;
+  }
+
+  /* Cursor blink */
+  .sl-cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1em;
+    background-color: var(--sl-amber);
+    vertical-align: text-bottom;
+    animation: sl-blink 1s steps(1) infinite;
+  }
+  .sl-cursor-green {
+    background-color: var(--sl-green);
+  }
+  .sl-cursor-red {
+    background-color: var(--sl-red);
+  }
+
+  /* Decode on load */
+  .sl-decode {
+    animation: sl-decode 0.6s steps(20) forwards;
+  }
+
+  /* Scan on hover */
+  .sl-row-scan {
+    position: relative;
+    overflow: hidden;
+  }
+  .sl-row-scan::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 176, 0, 0.08) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.4s linear;
+    pointer-events: none;
+  }
+  .sl-row-scan:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* Pulsing dot */
+  .sl-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    animation: sl-pulse-dot 1.5s ease-in-out infinite;
+  }
+
+  /* ASCII divider */
+  .sl-divider {
+    font-family: var(--font-accent);
+    color: var(--sl-grid-2);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  /* Frame */
+  .sl-frame {
+    border: 1px solid var(--sl-grid);
+    background-color: var(--sl-void-2);
+    position: relative;
+  }
+  .sl-frame-bordered {
+    border: 1px solid var(--sl-amber);
+  }
+
+  /* Status indicators */
+  .sl-status-active { color: var(--sl-green); }
+  .sl-status-pending { color: var(--sl-amber); }
+  .sl-status-failed { color: var(--sl-red); }
+  .sl-status-idle { color: var(--sl-grid-2); }
+}
+
+@layer utilities {
+  .text-amber { color: var(--sl-amber); }
+  .text-amber-dim { color: var(--sl-amber-dim); }
+  .text-green { color: var(--sl-green); }
+  .text-red { color: var(--sl-red); }
+  .text-bone { color: var(--sl-bone); }
+  .text-bone-dim { color: var(--sl-bone-dim); }
+  .text-grid { color: var(--sl-grid); }
+  .text-grid-2 { color: var(--sl-grid-2); }
+  .text-void { color: var(--sl-void); }
+
+  .bg-amber { background-color: var(--sl-amber); }
+  .bg-green { background-color: var(--sl-green); }
+  .bg-red { background-color: var(--sl-red); }
+  .bg-bone { background-color: var(--sl-bone); }
+  .bg-void { background-color: var(--sl-void); }
+  .bg-void-2 { background-color: var(--sl-void-2); }
+  .bg-grid { background-color: var(--sl-grid); }
+  .bg-grid-2 { background-color: var(--sl-grid-2); }
+
+  .border-amber { border-color: var(--sl-amber); }
+  .border-amber-dim { border-color: var(--sl-amber-dim); }
+  .border-green { border-color: var(--sl-green); }
+  .border-red { border-color: var(--sl-red); }
+  .border-bone { border-color: var(--sl-bone); }
+  .border-grid { border-color: var(--sl-grid); }
+  .border-grid-2 { border-color: var(--sl-grid-2); }
+
+  .caret-amber { caret-color: var(--sl-amber); }
+  .caret-green { caret-color: var(--sl-green); }
+
+  /* Focus ring override */
+  *:focus {
+    outline: none;
+  }
+  *:focus-visible {
+    outline: 1px solid var(--sl-amber);
+    outline-offset: -1px;
+  }
+}
