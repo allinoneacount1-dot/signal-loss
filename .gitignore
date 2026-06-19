@@ -11,3 +11,4 @@ build/
 .vscode/
 target/
 **/target/
+.vercel
